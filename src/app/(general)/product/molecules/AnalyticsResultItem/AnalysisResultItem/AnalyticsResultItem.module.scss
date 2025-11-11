@@ -1,0 +1,94 @@
+.container {
+  flex: 1;
+}
+
+.itemHeader {
+  display: flex;
+  height: 60px;
+  padding: 0px 20px;
+  align-items: center;
+  gap: 24px;
+  align-self: stretch;
+
+  border-radius: 8px;
+  border: 1px solid #e2e2e2;
+  background: #fff;
+
+  justify-content: space-between;
+  align-items: center;
+
+  .itemTitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: #222;
+    line-height: 150%;
+  }
+
+  .score {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+
+    color: var(--score-color);
+    text-align: right;
+
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 140%;
+
+    .scoreDivider {
+      width: 1px;
+      height: 20px;
+
+      background: #9c9c9c;
+    }
+  }
+}
+
+.chip {
+  border-radius: 50px;
+  background: var(--light-score-color);
+  padding: 4px 12px;
+  margin: 8px 0 0 0;
+
+  color: #222;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 160%;
+  letter-spacing: -0.42px;
+
+  width: fit-content;
+}
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .checkItem {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 125%; /* 17.5px */
+    letter-spacing: -0.42px;
+
+    color: #9c9c9c;
+
+    &.fail {
+      color: #ff5e3a;
+      font-weight: 600;
+    }
+  }
+}

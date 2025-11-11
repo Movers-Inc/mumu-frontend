@@ -1,0 +1,53 @@
+{
+  "name": "ddd-admin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.693.0",
+    "@svgr/webpack": "^8.1.0",
+    "@tailwindcss/line-clamp": "^0.4.4",
+    "ag-grid-community": "^32.3.3",
+    "ag-grid-react": "^32.3.3",
+    "axios": "^1.7.7",
+    "chart.js": "^4.4.6",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "cheerio": "^1.0.0",
+    "classnames": "^2.5.1",
+    "cookie": "^1.0.1",
+    "d3": "^7.9.0",
+    "date-fns": "^4.1.0",
+    "framer-motion": "^11.11.17",
+    "lottie-react": "^2.4.0",
+    "moment-timezone": "^0.5.46",
+    "next": "15.0.3",
+    "next-auth": "^4.24.10",
+    "react": "^18.3.1",
+    "react-chartjs-2": "^5.2.0",
+    "react-datepicker": "^7.5.0",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.53.2",
+    "react-query": "^3.39.3",
+    "recharts": "^2.13.3",
+    "sass": "latest",
+    "serialize": "^0.1.3",
+    "tailwind-scrollbar-hide": "^1.1.7"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/recharts": "^1.8.29",
+    "eslint": "^8",
+    "eslint-config-next": "15.0.3",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,143 @@
+.tableContainer {
+  border: 1px solid #e2e2e2;
+  border-radius: 8px;
+
+  :global(.ag-root-wrapper) {
+    border: none !important;
+  }
+
+  :global(.ag-header) {
+    background: transparent !important;
+  }
+
+  :global(.ag-header-cell-text) {
+    color: #9c9c9c;
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: -0.308px;
+  }
+
+  :global(.ag-header-cell-label) {
+    justify-content: center;
+  }
+
+  :global(.ag-header-cell-sorted-asc),
+  :global(.ag-header-cell-sorted-desc) {
+    .ag-header-cell-label {
+      gap: 4px;
+    }
+  }
+
+  :global(.ag-cell) {
+    display: flex;
+    align-items: center;
+
+    &[col-id="productName"] {
+      justify-content: center;
+
+      .hyperlink {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    &[col-id="seoContents"],
+    &[col-id="promotionContents"],
+    &[col-id="deliveryContents"] {
+      justify-content: center;
+    }
+
+    &[col-id="action"] {
+      justify-content: flex-end;
+    }
+  }
+
+  :global(.ag-cell-last-left-pinned),
+  :global(.ag-cell-last) {
+    justify-content: flex-end;
+  }
+
+  :global(.ag-pinned-right-header) {
+    border: none !important;
+  }
+
+  :global(.ag-cell-first-right-pinned) {
+    border: none !important;
+  }
+
+  :global(.ag-row-even) {
+    background-color: #fbfbfc !important;
+  }
+
+  :global(.ag-row-row) {
+    background-color: transparent !important;
+  }
+}
+
+.actionButton {
+  padding: 10px 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #f0f0f0;
+
+  color: #000;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 150%; /* 21px */
+
+  &:hover {
+    background: #ff5e3a;
+
+    color: #fff;
+  }
+}
+
+.hyperlink {
+  color: #0066cc;
+  text-decoration: underline;
+
+  &:visited {
+    color: #551a8b;
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.empty {
+  width: 100%;
+  height: 776px;
+
+  border-radius: 20px;
+  border: 1px solid #e2e2e2;
+  background: #fbfbfc;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  span {
+    color: #e2e2e2;
+    text-align: center;
+
+    /* 타이틀 4 */
+    font-family: Pretendard;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 140%;
+  }
+}

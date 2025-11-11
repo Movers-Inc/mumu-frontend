@@ -1,0 +1,160 @@
+.container {
+  border-radius: 16px;
+  border: 1px solid #e2e2e2;
+  background: #fbfbfc;
+
+  padding: 20px 20px 30px 20px;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  height: 300px !important;
+}
+
+.blocked {
+  width: 100%;
+  height: 100%;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+
+  border-radius: 16px;
+  border: 1px solid var(--, #e2e2e2);
+  background: rgba(95, 95, 95, 0.5);
+  backdrop-filter: blur(5px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+
+  .blockedText {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 150%; /* 24px */
+
+    color: #fff;
+  }
+
+  .blockedButton {
+    color: #9c9c9c;
+    text-align: center;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 150%; /* 21px */
+
+    display: inline-flex;
+    padding: 8px 20px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    border-radius: 500px;
+    background: #fff;
+
+    margin-top: 30px;
+  }
+}
+
+.title {
+  color: #222;
+
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 140%; /* 28px */
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  gap: 27px;
+
+  margin: 12px 0 0 0;
+
+  flex: 1;
+
+  .rankList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .rankItem {
+      width: 126px;
+      height: 40px;
+
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
+
+      align-items: center;
+      justify-content: flex-start;
+      border-radius: 8px;
+
+      background: #f0f0f0;
+      padding: 0 0 0 8px;
+
+      &.active {
+        border: 1px solid #ff5e3a;
+        background: #ffeade;
+
+        .rankItemNumber {
+          background: #ff5e3a;
+        }
+
+        .rankItemKeyword {
+          color: #ff5e3a;
+        }
+      }
+
+      .rankItemNumber {
+        width: 18px;
+        height: 18px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 1000px;
+        color: #fff;
+        text-align: center;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+        letter-spacing: -0.36px;
+
+        background: #9c9c9c;
+      }
+
+      .rankItemKeyword {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+        text-align: center;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 150%; /* 24px */
+
+        color: #9c9c9c;
+      }
+    }
+  }
+}
+
+.chart {
+  margin-top: -12px !important;
+  padding: 0 !important;
+  width: 100% !important;
+}

@@ -1,0 +1,14 @@
+[
+  { "label": "1월 1주차", "income": 1, "outcome": 4 },
+  { "label": "1월 2주차", "income": 0, "outcome": 1 },
+  { "label": "1월 3주차", "income": 4, "outcome": 3 },
+  { "label": "1월 4주차", "income": 1, "outcome": 4 },
+  { "label": "1월 5주차", "income": 2, "outcome": 0 },
+  { "label": "2월 1주차", "income": 6, "outcome": 3 },
+  { "label": "2월 2주차", "income": 7, "outcome": 1 },
+  { "label": "2월 3주차", "income": 5, "outcome": 1 },
+  { "label": "2월 4주차", "income": 1, "outcome": 2 },
+  { "label": "3월 1주차", "income": 3, "outcome": 4 },
+  { "label": "3월 2주차", "income": 2, "outcome": 1 },
+  { "label": "3월 3주차", "income": 2, "outcome": 0 }
+]
