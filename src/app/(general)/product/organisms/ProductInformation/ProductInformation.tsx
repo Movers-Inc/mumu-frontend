@@ -11,19 +11,25 @@ export const ProductInformation = ({
   source,
   className,
 }: ProductInformationProps) => {
+  const thumbnailSrc = source?.productDetail?.thumbnail?.trim();
+
   return (
     <div className={classNames(styles.container, className)}>
       <p className={styles.title}>상품정보</p>
       <div className={styles.content}>
-        <img
-          src={source?.productDetail?.thumbnail}
-          width={200}
-          height={200}
-          alt="상품이미지"
-          className={styles.image}
-          loading="lazy"
-          decoding="async"
-        />
+        {thumbnailSrc ? (
+          <img
+            src={thumbnailSrc}
+            width={200}
+            height={200}
+            alt="상품이미지"
+            className={styles.image}
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div className={styles.imagePlaceholder}>이미지 없음</div>
+        )}
         <div className={styles.info}>
           <div className={styles.top}>
             <div className={styles.category}>

@@ -34,8 +34,8 @@ const Chart: FC<ChartProps> = (props) => {
     >
       <defs>
         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="30%" stopColor="#FF5E3A" stopOpacity={0.5} />
-          <stop offset="100%" stopColor="#FFFFFF" stopOpacity={0} />
+          <stop offset="20%" stopColor="#3129A5" stopOpacity={0.55} />
+          <stop offset="100%" stopColor="#3129A5" stopOpacity={0} />
         </linearGradient>
       </defs>
 
@@ -43,7 +43,7 @@ const Chart: FC<ChartProps> = (props) => {
       <Area
         type="monotone"
         dataKey="uv"
-        stroke="#FF5E3A"
+        stroke="#3129A5"
         strokeWidth={1}
         fillOpacity={1}
         fill="url(#colorUv)"

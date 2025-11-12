@@ -68,11 +68,11 @@ const AnalyticsResultItem = ({ source }: AnalyticsResultItemProps) => {
           />
         </svg>
 
-        <p className={styles.score}>
+        <div className={styles.score}>
           <span> {Math.round(animatedScore)}점</span>
           <div className={styles.scoreDivider} />
           <span>{scoreMessage}</span>
-        </p>
+        </div>
       </div>
 
       <div className={styles.chip}>
