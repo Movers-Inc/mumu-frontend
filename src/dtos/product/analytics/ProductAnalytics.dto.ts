@@ -43,6 +43,7 @@ export interface ProductDetail {
 
 export interface ProductDetailAnalytics {
   productDetail: ProductDetail;
+  url?: string;
 
   seo: {
     productName: {

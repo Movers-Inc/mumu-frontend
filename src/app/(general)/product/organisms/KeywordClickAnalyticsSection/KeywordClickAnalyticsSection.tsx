@@ -16,17 +16,19 @@ export const KeywordClickAnalyticsSection = ({
   source,
   className,
 }: KeywordClickAnalyticsSectionProps) => {
+  const hasCategoryId = !!source?.productDetail?.category?.subCategory?.subCategory?.id;
+
   const displayCategory = useMemo(() => {
-    if (source?.productDetail?.provider === "NAVER") {
-      return `${source?.productDetail?.category?.name} > ${source?.productDetail?.category?.subCategory?.name} > ${source?.productDetail?.category?.subCategory?.subCategory?.name}`;
+    if (source?.productDetail?.provider === "NAVER" && source?.productDetail?.category?.name) {
+      return `${source.productDetail.category.name}${source.productDetail.category.subCategory ? ` > ${source.productDetail.category.subCategory.name}` : ""}${source.productDetail.category.subCategory?.subCategory ? ` > ${source.productDetail.category.subCategory.subCategory.name}` : ""}`;
     }
-    return "-";
+    return "";
   }, [source]);
 
   const { data: keywordRankData } = AnalyticsAPI.useGetWeekRank(
     source.productDetail.category?.subCategory?.subCategory?.id ?? "",
     {
-      enabled: !!source.productDetail.category?.subCategory?.subCategory?.id,
+      enabled: hasCategoryId,
     }
   );
 
@@ -37,10 +39,26 @@ export const KeywordClickAnalyticsSection = ({
   return (
     <div className={classNames(styles.container, className)}>
       <p className={styles.title}>
-        최근 7일 <span style={{ color: "#FF5E3A" }}>{displayCategory}</span>
-        카테고리 TOP 5 키워드 클릭량
+        {hasCategoryId ? (
+          <>
+            최근 7일 <span style={{ color: "#FF5E3A" }}>{displayCategory}</span>
+            {" "}카테고리 TOP 5 키워드 클릭량
+          </>
+        ) : (
+          "카테고리 정보가 없어 키워드 클릭량을 표시할 수 없습니다."
+        )}
       </p>
       <div className={styles.content}>
+        {!hasCategoryId && source?.productDetail?.provider === "NAVER" ? (
+          <div className={styles.blocked}>
+            <p className={styles.blockedText}>
+              상품 카테고리 정보가 없어
+              <br />
+              키워드 클릭량을 표시할 수 없습니다.
+            </p>
+          </div>
+        ) : (
+          <>
         <div className={styles.rankList}>
           {keywordRankData?.data
             ?.slice(0, 5)
@@ -76,6 +94,8 @@ export const KeywordClickAnalyticsSection = ({
           className={styles.chart}
           tickFill="#9C9C9C"
         />
+          </>
+        )}
       </div>
 
       {source.productDetail.provider === "IMWEB" && (
@@ -125,6 +145,7 @@ export const KeywordClickAnalyticsSection = ({
       )}
 
       {source.productDetail.provider === "NAVER" &&
+        hasCategoryId &&
         (!keywordRankData ||
           !keywordRankData?.data ||
           keywordRankData?.data?.length === 0) && (

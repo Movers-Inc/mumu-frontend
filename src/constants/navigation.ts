@@ -17,6 +17,10 @@ export const navigation: route[] = [
     href: "/product"
   },
   {
+    name: "광고 소재",
+    href: "https://ads.mumumarketing.com/"
+  },
+  {
     name: "관리",
     href: "/manage"
   },

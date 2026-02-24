@@ -32,14 +32,13 @@ export const ProductInformation = ({
         )}
         <div className={styles.info}>
           <div className={styles.top}>
-            <div className={styles.category}>
-              {(() => {
-                if (source?.productDetail?.provider === "NAVER") {
-                  return `${source?.productDetail?.category?.name} > ${source?.productDetail?.category?.subCategory?.name} > ${source?.productDetail?.category?.subCategory?.subCategory?.name}`;
-                }
-                return "-";
-              })()}
-            </div>
+            {source?.productDetail?.category?.name && (
+              <div className={styles.category}>
+                {source.productDetail.provider === "NAVER"
+                  ? `${source.productDetail.category.name}${source.productDetail.category.subCategory ? ` > ${source.productDetail.category.subCategory.name}` : ""}${source.productDetail.category.subCategory?.subCategory ? ` > ${source.productDetail.category.subCategory.subCategory.name}` : ""}`
+                  : "-"}
+              </div>
+            )}
             <div className={styles.title}>{source?.productDetail?.name}</div>
             <p className={styles.brand}>{source?.productDetail?.brandName}</p>
           </div>

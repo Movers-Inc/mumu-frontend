@@ -71,27 +71,30 @@ const Navigation: FC<NavigationProps> = (props) => {
 
           {/* Navigation */}
           <div className="flex flex-row gap-[60px] items-center whitespace-nowrap">
-            {navigation.map((navigate) => (
-              <a
-                key={navigate.name}
-                className={classNames(
-                  // 루트 경로(`/`)와 그 외 경로를 구분하는 조건 추가
-                  (pathname === "/" && navigate.href === "/") ||
-                    (navigate.href != "/" && pathname.includes(navigate.href))
-                    ? "text-[#222]"
-                    : "text-[#9C9C9C] hover:text-[#FF5E3A] hover:cursor-pointer",
-                  "hover:bg-transparent"
-                )}
-                href={
-                  (pathname === "/" && navigate.href === "/") ||
-                  (navigate.href != "/" && pathname.includes(navigate.href))
-                    ? undefined
-                    : navigate.href
-                }
-              >
-                {navigate.name}
-              </a>
-            ))}
+            {navigation.map((navigate) => {
+              const isExternal = navigate.href.startsWith("http");
+              const isActive =
+                (pathname === "/" && navigate.href === "/") ||
+                (!isExternal && navigate.href !== "/" && pathname.includes(navigate.href));
+              return (
+                <a
+                  key={navigate.name}
+                  className={classNames(
+                    isActive
+                      ? "text-[#222]"
+                      : "text-[#9C9C9C] hover:text-[#FF5E3A] hover:cursor-pointer",
+                    "hover:bg-transparent"
+                  )}
+                  href={isActive && !isExternal ? undefined : navigate.href}
+                  {...(isExternal && {
+                    target: "_blank",
+                    rel: "noopener noreferrer"
+                  })}
+                >
+                  {navigate.name}
+                </a>
+              );
+            })}
           </div>
 
           {/* Login */}
