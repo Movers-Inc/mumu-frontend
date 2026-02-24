@@ -27,6 +27,7 @@ import { AnalyticsAPI, CategoryAPI } from "@/api";
 import { CategoryDto } from "@/dtos/category.dto";
 import { useRouter } from "next/navigation";
 import { TrendDto } from "@/dtos/keyword/Trend.dto";
+import { usePopup } from "@/providers";
 
 interface History {
   category1: string | null;
@@ -34,7 +35,12 @@ interface History {
   category3: string | null;
 }
 
+/** 키워드 페이지 캘린더 선택 범위: 2026.2.20 ~ 오늘 */
+const KEYWORD_START_DATE = new Date("2026-02-20");
+
 const HomePage: NextPage = () => {
+  const { openPopup } = usePopup();
+
   const [category1, setCategory1] = useState<number | null>(null);
   const [category2, setCategory2] = useState<number | null>(null);
   const [category3, setCategory3] = useState<number | null>(null);
@@ -50,7 +56,8 @@ const HomePage: NextPage = () => {
     JSON.parse(localStorage.getItem("history") || "[]")
   );
 
-  const [recentPath, setRecentPath] = useState<string>();
+  /** 키워드별 분석 탭 클릭 시 이동할 고정 경로 (API 호출 없음) */
+  const recentPath = "/keyword/analytics/폼클렌징?cid=50000451&date=2026-02-20";
 
   // Fetch Level 1 Categories (pid = 0)
   useEffect(() => {
@@ -59,22 +66,6 @@ const HomePage: NextPage = () => {
       setLevel1Categories(response.data);
     };
     fetchRootCategories();
-
-    const fetchRandomKeyword = async () => {
-      const date = new Date();
-      date.setDate(-1);
-
-      try {
-        const recentKeyword = (await AnalyticsAPI.getRecentKeyword()).data;
-
-        setRecentPath(
-          `/keyword/analytics/${recentKeyword.keyword}?cid=${recentKeyword.parentCID}&date=${recentKeyword.startDate}`
-        );
-      } catch {
-        setRecentPath(`/keyword/analytics/lg샴푸?cid=50000298&date=2025-03-13`);
-      }
-    };
-    fetchRandomKeyword();
   }, []);
 
   // Fetch Level 2 Categories (based on selected category1)
@@ -107,9 +98,7 @@ const HomePage: NextPage = () => {
 
   const [openDate, setOpenDate] = useState<boolean>(false);
 
-  const [selectDate, setSelectDate] = useState<Date>(
-    new Date(new Date().setDate(new Date().getDate()))
-  );
+  const [selectDate, setSelectDate] = useState<Date>(() => KEYWORD_START_DATE);
 
   const removeHistory = (index: number) => {
     // 상태 업데이트
@@ -165,18 +154,39 @@ const HomePage: NextPage = () => {
       setIsLoading(true);
       storeHistory();
 
-      const data = await AnalyticsAPI.getTrend(
-        category3,
-        selectDate,
-        rank,
-        gap,
-        { pagination: { page: page } }
-      );
+      try {
+        const data = await AnalyticsAPI.getTrend(
+          category3,
+          selectDate,
+          rank,
+          gap,
+          { pagination: { page: page } }
+        );
 
-      console.log(data.data, page);
-      setData(data.data);
-      setTotalPages(data.pagination.totalPages);
-      setIsLoading(false);
+        setData(data.data ?? []);
+        setTotalPages(data.pagination?.totalPages ?? 1);
+
+        if (!data.data?.length) {
+          openPopup({
+            title: "조회 결과 없음",
+            body: "조회된 키워드가 없습니다. 선택한 기간·카테고리에 해당하는 데이터가 없을 수 있습니다.",
+            placeholder: "닫기"
+          });
+        }
+      } catch (err) {
+        const message =
+          (err as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message ??
+          (err as Error)?.message ??
+          "키워드 분석 중 오류가 발생했습니다.";
+        openPopup({
+          title: "오류",
+          body: message,
+          placeholder: "닫기"
+        });
+      } finally {
+        setIsLoading(false);
+      }
     } else {
       useRouter().push("/login");
     }
@@ -197,7 +207,7 @@ const HomePage: NextPage = () => {
           { label: "급상승 키워드", path: "/keyword" },
           {
             label: "키워드별 분석",
-            path: recentPath!
+            path: recentPath
             // ${selectDate.getFullYear()}-${String(
             //   selectDate.getMonth() + 1
             // ).padStart(2, "0")}-${String(selectDate.getDate() + 8).padStart(

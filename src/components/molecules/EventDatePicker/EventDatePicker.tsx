@@ -113,7 +113,7 @@ const EventDatePicker: FC<DatePickerProps> = (props) => {
                   selected={selectedDate}
                   onChange={(date) => handleDateChange(date)}
                   inline
-                  minDate={new Date("2025-11-11")}
+                  minDate={new Date("2026-02-20")}
                   maxDate={new Date()}
                   calendarClassName="!border-0 !shadow-none"
                   dayClassName={dayClassName}

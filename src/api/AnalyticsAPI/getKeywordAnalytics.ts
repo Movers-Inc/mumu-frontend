@@ -24,7 +24,7 @@ export const getDetail = async (cid: string, keyword: string, date: Date) => {
 
 export const getRecentKeyword = async () => {
   const { data } = await API.get<Response<RecentKeywordDto>>(
-    `/keyword/analytics/detail/recent`
+    `/keyword/analytics/detail/random`
   );
 
   return data;

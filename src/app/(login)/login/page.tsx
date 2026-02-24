@@ -29,6 +29,23 @@ interface SignInInput {
   password: string;
 }
 
+/** 백엔드 에러 응답에서 메시지 추출 (NestJS 401, message 문자열/배열, error 필드 지원) */
+function getLoginErrorMessage(error: unknown): string {
+  const fallback = "로그인에 실패했습니다. 다시 시도해주세요.";
+  const err = error as {
+    response?: { data?: { message?: string | string[]; error?: string } };
+    message?: string;
+  };
+  const data = err?.response?.data;
+  if (data && typeof data === "object") {
+    if (typeof data.message === "string" && data.message.trim()) return data.message;
+    if (Array.isArray(data.message) && data.message[0]) return String(data.message[0]);
+    if (typeof data.error === "string" && data.error.trim()) return data.error;
+  }
+  if (typeof err?.message === "string" && err.message.trim()) return err.message;
+  return fallback;
+}
+
 const LoginPage: NextPage = () => {
   const router = useRouter();
 
@@ -99,15 +116,19 @@ const LoginPage: NextPage = () => {
       } catch (error: unknown) {
         setIsLoading(false);
 
-        if (error instanceof Error) {
-          console.error("Error message:", error.message);
-          // handlePopup logic here
-        } else {
-          console.error("Unknown error:", error);
-        }
+        const message = getLoginErrorMessage(error);
+
+        // 다음 틱에서 팝업을 띄워 React 상태 배칭 후 확실히 렌더되도록 함
+        setTimeout(() => {
+          openPopup({
+            title: "로그인 실패",
+            body: message,
+            placeholder: "닫기"
+          });
+        }, 0);
       }
     },
-    [saveEmail, savePassword]
+    [saveEmail, savePassword, openPopup]
   );
 
   const handleInvalidSubmit: SubmitErrorHandler<SignInInput> = useCallback(
