@@ -155,11 +155,13 @@ const HomePage: NextPage = () => {
       storeHistory();
 
       try {
+        const safeRank = Number.isFinite(rank) ? rank : 0;
+        const safeGap = Number.isFinite(gap) ? gap : 0;
         const data = await AnalyticsAPI.getTrend(
           category3,
           selectDate,
-          rank,
-          gap,
+          safeRank,
+          safeGap,
           { pagination: { page: page } }
         );
 
@@ -367,8 +369,18 @@ const HomePage: NextPage = () => {
               <div className="flex flex-row gap-2 items-center">
                 {/* input ref */}
                 <input
-                  value={rank}
-                  onChange={(e) => setRank(parseInt(e.target.value))}
+                  type="number"
+                  min={0}
+                  value={rank === 0 ? "" : rank}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === "") {
+                      setRank(0);
+                      return;
+                    }
+                    const n = parseInt(v, 10);
+                    setRank(Number.isNaN(n) ? 0 : n);
+                  }}
                   className="border border-[#E2E2E2] rounded-[8px] text-[14px] text-[#222] font-medium p-[7px] w-20"
                 />
                 <div className="text-[14px] font-semibold text-[#9C9C9C]">
@@ -395,8 +407,18 @@ const HomePage: NextPage = () => {
               <div className="flex flex-row gap-2 items-center">
                 {/* input ref */}
                 <input
-                  value={gap}
-                  onChange={(e) => setGap(parseInt(e.target.value))}
+                  type="number"
+                  min={0}
+                  value={gap === 0 ? "" : gap}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === "") {
+                      setGap(0);
+                      return;
+                    }
+                    const n = parseInt(v, 10);
+                    setGap(Number.isNaN(n) ? 0 : n);
+                  }}
                   className="border border-[#E2E2E2] rounded-[8px] text-[14px] text-[#222] font-medium p-[7px] w-20"
                 />
                 <div className="text-[14px] font-semibold text-[#9C9C9C]">
