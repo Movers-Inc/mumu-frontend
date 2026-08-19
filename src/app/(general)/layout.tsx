@@ -9,7 +9,7 @@ import {
 import { Navigation } from "@/components/templates";
 import { cookies } from "next/headers";
 import Display from "../Display";
-import React, { ReactElement } from "react";
+import React from "react";
 import { Role } from "@/dtos/common";
 import localFont from "next/font/local";
 
@@ -40,7 +40,7 @@ const pretendard = localFont({
 export default async function RootLayout({
   children
 }: {
-  children: ReactElement; // children의 타입을 명시적으로 ReactElement로 설정
+  children: React.ReactNode;
 }) {
   const cookieStore = await cookies();
   const userToken = cookieStore.get("DDD-marketing")?.value;
