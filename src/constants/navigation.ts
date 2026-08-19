@@ -1,31 +1,14 @@
-interface route {
-  name: string;
+import { MessageKey } from "@/lib/i18n/types";
+
+export interface NavigationItem {
+  key: MessageKey;
   href: string;
 }
 
-export const navigation: route[] = [
-  {
-    name: "홈",
-    href: "/"
-  },
-  {
-    name: "키워드 분석",
-    href: "/keyword"
-  },
-  {
-    name: "상품 분석",
-    href: "/product"
-  },
-  {
-    name: "광고 소재",
-    href: "https://ads.mumumarketing.com/"
-  },
-  {
-    name: "관리",
-    href: "/manage"
-  },
-  {
-    name: "마이페이지",
-    href: "/mypage"
-  }
+export const navigation: NavigationItem[] = [
+  { key: "nav.home", href: "/" },
+  { key: "nav.keyword", href: "/keyword" },
+  { key: "nav.ads", href: "https://ads.mumumarketing.com/" },
+  { key: "nav.manage", href: "/manage" },
+  { key: "nav.mypage", href: "/mypage" }
 ];

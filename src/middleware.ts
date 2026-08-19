@@ -1,16 +1,36 @@
 import { NextMiddleware, NextRequest, NextResponse } from "next/server";
 import { API_URL } from "./constants";
+import {
+  detectLocaleFromHeader,
+  getLocaleFromPathname,
+  isLocale,
+  stripLocaleFromPathname,
+  withLocalePath
+} from "@/lib/i18n/routing";
+import { LOCALE_COOKIE } from "@/lib/i18n/locale";
+import { Locale } from "@/lib/i18n/types";
+
+const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
+function withLocaleCookie(response: NextResponse, locale: Locale) {
+  response.cookies.set(LOCALE_COOKIE, locale, {
+    path: "/",
+    maxAge: LOCALE_COOKIE_MAX_AGE,
+    sameSite: "lax"
+  });
+  return response;
+}
 
 const middleware: NextMiddleware = async (request: NextRequest) => {
   const { pathname, origin } = request.nextUrl;
 
-  // 정적 파일 및 Next.js 시스템 경로 제외
   if (
     ["/api", "/_next", "/favicon.ico"].some((prefix) =>
       pathname.startsWith(prefix)
     )
-  )
+  ) {
     return NextResponse.next();
+  }
 
   if (
     pathname.includes(".png") ||
@@ -21,7 +41,23 @@ const middleware: NextMiddleware = async (request: NextRequest) => {
     return NextResponse.next();
   }
 
-  console.log(pathname);
+  let locale = getLocaleFromPathname(pathname);
+
+  if (!locale) {
+    const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
+    const preferred = isLocale(cookieLocale)
+      ? cookieLocale
+      : detectLocaleFromHeader(request.headers.get("accept-language"));
+
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = withLocalePath(
+      preferred,
+      pathname === "/" ? "/" : pathname
+    );
+    return withLocaleCookie(NextResponse.redirect(redirectUrl), preferred);
+  }
+
+  const pathWithoutLocale = stripLocaleFromPathname(pathname);
   const token = request?.cookies?.get("DDD-marketing")?.value;
 
   let isAuthenticated = false;
@@ -29,53 +65,61 @@ const middleware: NextMiddleware = async (request: NextRequest) => {
   let role = token?.split(",")[3];
   let restricted = false;
 
-  // console.debug("token", token);
   if (token) {
-    const [accessToken, refreshToken, brandId] = token.split(","); // refreshToken 제거
+    const [accessToken, refreshToken, brandId] = token.split(",");
     try {
       const response = await fetch(`${API_URL}/auth/profile`, {
         headers: { Authorization: `Bearer ${accessToken} ${refreshToken}` }
       });
       const res = await response.json();
 
-      // console.log(res);
-      isAuthenticated = !!res.data?.id; // 사용자가 인증된 경우
-
+      isAuthenticated = !!res.data?.id;
       brand = parseInt(brandId) ?? 0;
 
       restricted =
         brand === 1
           ? role === "GENERAL" &&
-            (pathname === "/manage/mumu" ||
-              pathname === "/manage/mumu/brand/manage")
-          : role === "GENERAL" && pathname === "/manage";
+            (pathWithoutLocale === "/manage/mumu" ||
+              pathWithoutLocale === "/manage/mumu/brand/manage")
+          : role === "GENERAL" && pathWithoutLocale === "/manage";
     } catch (error) {
       console.error("인증 확인 중 오류 발생:", error);
     }
   }
 
   if (isAuthenticated === true && restricted === true) {
-    return NextResponse.redirect(`${origin}/block`);
+    return withLocaleCookie(
+      NextResponse.redirect(`${origin}${withLocalePath(locale, "/block")}`),
+      locale
+    );
   }
 
-  // 회원 전용 경로 보호
-  if (["/mypage", "/manage"].some((prefix) => pathname.startsWith(prefix))) {
+  if (
+    ["/mypage", "/manage"].some((prefix) => pathWithoutLocale.startsWith(prefix))
+  ) {
     if (!isAuthenticated) {
-      return NextResponse.redirect(`${origin}/login`);
-    } else {
-      if (brand === 1) {
-        if (
-          !pathname.includes("mumu") &&
-          !pathname.includes("product/analytics")
-        ) {
-          const newPath = `${origin}${pathname}/mumu`;
-          return NextResponse.redirect(newPath);
-        }
+      return withLocaleCookie(
+        NextResponse.redirect(`${origin}${withLocalePath(locale, "/login")}`),
+        locale
+      );
+    }
+
+    if (brand === 1) {
+      if (
+        !pathWithoutLocale.includes("mumu") &&
+        !pathWithoutLocale.includes("product/analytics")
+      ) {
+        return withLocaleCookie(
+          NextResponse.redirect(
+            `${origin}${withLocalePath(locale, `${pathWithoutLocale}/mumu`)}`
+          ),
+          locale
+        );
       }
     }
   }
 
-  return NextResponse.next();
+  return withLocaleCookie(NextResponse.next(), locale);
 };
 
 export default middleware;

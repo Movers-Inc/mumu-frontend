@@ -125,10 +125,7 @@ const HomePage: NextPage = () => {
       <div className="h-screen bg-white hidden lg:flex justify-center font-pretendard-regular">
         <div className="max-w-[1440px] w-full flex flex-col">
           <SubNavigation
-            items={[
-              { label: "마이페이지", path: "/mypage" },
-              { label: "상품 분석 내역", path: "/mypage/product/analytics" }
-            ]}
+            items={[{ label: "마이페이지", path: "/mypage" }]}
             currentPath="/mypage"
           />
           <div className="w-full pb-2 mb-4 text-[16px] font-bold border-b-[0.4px] border-[#9C9C9C]">

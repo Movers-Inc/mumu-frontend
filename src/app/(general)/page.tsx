@@ -11,7 +11,7 @@ import { SearchInput } from "@/components/atoms";
 import { useToast } from "@/providers";
 
 // constant
-import { categories } from "@/constants/category";
+import { categories, getCategoryLabel } from "@/constants/category";
 
 // asset
 import Chevron from "./chevron.svg";
@@ -104,7 +104,8 @@ const MainPage: NextPage = () => {
             </button>
 
             <div className="font-bold text-[#000] text-center w-[210px] py-2 bg-[#FFF5E6] text-[24px] rounded-[16px]">
-              {categories[activeIndex].name}
+              {getCategoryLabel(categories[activeIndex].cid, "ko")}
+              {categories[activeIndex].emoji}
             </div>
 
             <button
@@ -152,13 +153,7 @@ const MainPage: NextPage = () => {
             </div>
           </div>
         </div>
-
-        <div
-          className="hover:cursor-pointer"
-          onClick={() => window.open("https://home.dddmkt.com/contact")}
-        >
-          <img src="/banner.png" className="mb-[100px]" />
-        </div>
+      </div>
 
         {/* <div className="py-5 mb-[200px]">
           <iframe

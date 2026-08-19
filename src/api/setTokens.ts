@@ -1,7 +1,39 @@
 import { NextRequest } from "next/server";
 import { JWT } from ".";
+import {
+  buildKeywordAnalyticsPath,
+  clearKeywordDraft,
+  clearReturnUrl,
+  getKeywordDraft,
+  getReturnUrl
+} from "@/lib/keyword-draft";
+import { getStoredLocale } from "@/lib/i18n/locale";
+import {
+  getLocaleFromPathname,
+  withLocalePath
+} from "@/lib/i18n/routing";
 
-// 토큰 저장
+function resolvePostLoginPath(): string {
+  const locale = getStoredLocale();
+  const draft = getKeywordDraft();
+  const returnUrl = getReturnUrl();
+
+  if (draft?.keyword) {
+    const path = withLocalePath(locale, buildKeywordAnalyticsPath(draft));
+    clearKeywordDraft();
+    clearReturnUrl();
+    return path;
+  }
+
+  if (returnUrl) {
+    clearReturnUrl();
+    if (getLocaleFromPathname(returnUrl)) return returnUrl;
+    return withLocalePath(locale, returnUrl);
+  }
+
+  return withLocalePath(locale, "/");
+}
+
 export const setTokens = async (
   tokens: JWT | null,
   serverSideRequest?: NextRequest
@@ -24,7 +56,7 @@ export const setTokens = async (
         }
       });
 
-      window.location.href = "/";
+      window.location.href = withLocalePath(getStoredLocale(), "/");
     } else {
       const response = await fetch("/api/session/login", {
         method: "POST",
@@ -39,7 +71,7 @@ export const setTokens = async (
         })
       });
       if (response.status === 200) {
-        window.location.href = "/"; // 또는 다른 리다이렉트 로직 추가
+        window.location.href = resolvePostLoginPath();
       }
     }
   }

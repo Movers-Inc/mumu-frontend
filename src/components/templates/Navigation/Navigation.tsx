@@ -1,121 +1,115 @@
 "use client";
 
-import Logo from "./logo.svg";
-
-import { usePathname } from "next/navigation";
 import { FC } from "react";
+import { usePathname } from "next/navigation";
 import classNames from "classnames";
-import dynamic from "next/dynamic";
-
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
-
-// component
+import Logo from "./logo.svg";
 import { navigation } from "@/constants/navigation";
-
-// api
 import { AuthAPI } from "@/api";
-
-// asset
-import animation from "./animation.json";
+import { LocaleSelector } from "@/components/public";
+import { useLocale } from "@/providers/LocaleProvider";
+import { stripLocaleFromPathname } from "@/lib/i18n/routing";
+import { isSigned } from "@/utils";
 
 interface NavigationProps {
   className?: string;
 }
 
-const Navigation: FC<NavigationProps> = (props) => {
-  const { className } = props;
-
-  const { profile, isLoading, isError } = AuthAPI.useGetProfile();
-
-  // 500 에러 또는 로그인 안 됨 시 profile을 즉시 null로 처리
-
+const Navigation: FC<NavigationProps> = ({ className }) => {
+  const { t, localizePath } = useLocale();
+  const signedIn = isSigned();
   const pathname = usePathname();
+  const pathWithoutLocale = stripLocaleFromPathname(pathname);
 
-  // 로딩 중에도 헤더 바는 표시 (Vercel 등에서 API 지연 시 헤더가 안 보이는 문제 방지)
-  const showProfile = !isLoading || isError;
+  const { profile, isLoading, isError } = AuthAPI.useGetProfile({
+    enabled: signedIn
+  });
+
+  const ready = !isLoading || isError;
 
   return (
     <>
-      <div className="h-[60px]" />
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none; /* 스크롤바를 숨깁니다 */
-        }
-      `}</style>
-
-      <div
+      <div className="h-16" />
+      <header
         className={classNames(
-          "w-full px-5 h-[60px] fixed top-0 left-1/2 -translate-x-1/2 z-header backdrop-filter backdrop-blur-sm overflow-x-scroll flex flex-col items-center",
+          "fixed top-0 left-0 z-[200] w-full overflow-visible bg-white border-b border-[#EEEEEE]",
           className
         )}
-        style={{
-          scrollbarWidth: "none" /* 파이어폭스 */,
-          msOverflowStyle: "none" /* IE 및 Edge */
-        }}
       >
-        {isLoading && !isError && (
-          <div className="absolute top-2 right-4 w-[15px] h-[15px]">
-            <Lottie animationData={animation} loop={true} />
-          </div>
-        )}
-        <div className="w-full flex flex-row gap-6 justify-between h-full items-center max-w-[1440px]">
-          {/* Logo */}
-          <div className="flex flex-row gap-6">
-            <a
-              className="mr-6 hover:bg-gray-200 hover:text-gray-800 hover:bg-transparent hover:cursor-pointer"
-              href={"/"}
-            >
-              <Logo width={140} height={27} />
+        <div className="mx-auto grid h-16 max-w-[1440px] grid-cols-3 items-center px-6">
+          <div className="flex justify-start">
+            <a href={localizePath("/")} className="shrink-0">
+              <Logo width={132} height={26} />
             </a>
           </div>
 
-          {/* Navigation */}
-          <div className="flex flex-row gap-[60px] items-center whitespace-nowrap">
-            {navigation.map((navigate) => {
-              const isExternal = navigate.href.startsWith("http");
-              const isActive =
-                (pathname === "/" && navigate.href === "/") ||
-                (!isExternal && navigate.href !== "/" && pathname.includes(navigate.href));
+          <nav className="flex items-center justify-center gap-8" aria-label="Main">
+            {navigation.map((item) => {
+              const external = item.href.startsWith("http");
+              const href = external ? item.href : localizePath(item.href);
+              const active =
+                (pathWithoutLocale === "/" && item.href === "/") ||
+                (!external &&
+                  item.href !== "/" &&
+                  pathWithoutLocale.startsWith(item.href));
+
               return (
                 <a
-                  key={navigate.name}
+                  key={item.key}
+                  href={href}
                   className={classNames(
-                    isActive
-                      ? "text-[#222]"
-                      : "text-[#9C9C9C] hover:text-[#FF5E3A] hover:cursor-pointer",
-                    "hover:bg-transparent"
+                    "shrink-0 text-[14px]",
+                    active
+                      ? "font-semibold text-[#3129A5]"
+                      : "font-medium text-[#666] hover:text-[#222]"
                   )}
-                  href={isActive && !isExternal ? undefined : navigate.href}
-                  {...(isExternal && {
-                    target: "_blank",
-                    rel: "noopener noreferrer"
-                  })}
+                  {...(external
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
                 >
-                  {navigate.name}
+                  {t(item.key)}
                 </a>
               );
             })}
+          </nav>
+
+          <div className="flex items-center justify-end gap-2">
+            <LocaleSelector />
+            {ready && profile ? (
+              <>
+                <a
+                  href={localizePath("/mypage")}
+                  className="h-9 px-4 rounded-full border border-[#3129A5] text-[13px] font-medium text-[#3129A5] leading-9"
+                >
+                  {t("header.profile")}
+                </a>
+                <button
+                  type="button"
+                  className="h-9 px-2 text-[13px] text-[#888] hover:text-[#222]"
+                  onClick={() => AuthAPI.logout()}
+                >
+                  {t("header.logout")}
+                </button>
+              </>
+            ) : ready ? (
+              <>
+                <a
+                  href={localizePath("/login")}
+                  className="h-9 px-3 text-[13px] font-medium text-[#3129A5] leading-9"
+                >
+                  {t("header.login")}
+                </a>
+                <a
+                  href={localizePath("/login")}
+                  className="h-9 px-4 rounded-full bg-[#3129A5] text-[13px] font-medium text-white leading-9"
+                >
+                  {t("header.start")}
+                </a>
+              </>
+            ) : null}
           </div>
-
-          {/* Login */}
-
-          {showProfile && profile ? (
-            <a
-              className="border border-[#3129a5] text-[#3129a5] text-[16px] px-[18px] py-2 rounded-[50px] hover:cursor-pointer whitespace-nowrap box-border inline-block outline outline-1 outline-transparent"
-              onClick={() => AuthAPI.logout()}
-            >
-              로그아웃
-            </a>
-          ) : (
-            <a
-              className="border border-[#3129a5] text-[#3129a5] text-[16px] px-[18px] py-2 rounded-[50px] hover:cursor-pointer whitespace-nowrap box-border inline-block outline outline-1 outline-transparent"
-              href="/login"
-            >
-              로그인
-            </a>
-          )}
         </div>
-      </div>
+      </header>
     </>
   );
 };

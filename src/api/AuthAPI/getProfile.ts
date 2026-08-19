@@ -1,27 +1,36 @@
 import { useQuery } from "react-query";
-import { API } from "..";
+import { API, getTokens } from "..";
 import { AdminDto } from "@/dtos/admin/Admin.dto";
 import { Response } from "../types";
 
-export const getProfile = async () => {
-  const { data } = await API.get<Response<AdminDto>>("/auth/profile");
+export const getProfile = async (): Promise<AdminDto | null> => {
+  if (!getTokens()?.accessToken) {
+    return null;
+  }
 
-  return data.data;
+  try {
+    const { data } = await API.get<Response<AdminDto>>("/auth/profile");
+    return data.data;
+  } catch {
+    return null;
+  }
 };
 
-export const useGetProfile = () => {
-  const query = useQuery("getMyProfile", getProfile, {
-    retry: false, // 재시도 비활성화
-    onError: () => {
-      return null;
-    }
-  });
+type UseGetProfileOptions = {
+  enabled?: boolean;
+};
 
-  // 프로필 상태 반환
-  const profile = query.isError ? null : query.data;
+export const useGetProfile = (options?: UseGetProfileOptions) => {
+  const isSignedIn = options?.enabled ?? Boolean(getTokens()?.accessToken);
+
+  const query = useQuery("getMyProfile", getProfile, {
+    enabled: isSignedIn,
+    retry: false,
+    useErrorBoundary: false
+  });
 
   return {
     ...query,
-    profile
+    profile: query.data ?? null
   };
 };
