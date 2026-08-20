@@ -162,7 +162,6 @@ const MainPage: NextPage = () => {
             height={"1000px"}
           />
         </div> */}
-      </div>
     </div>
   );
 };
