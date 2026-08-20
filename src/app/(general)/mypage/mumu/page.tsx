@@ -44,8 +44,8 @@ const HomePage: NextPage = () => {
     const fetchProfile = async () => {
       try {
         const profile = await AuthAPI.getProfile(); // API 호출
-        setMyId(profile.id);
         if (profile) {
+          setMyId(profile.id);
           // 폼에 기본값 설정
           setValue("name", profile.name || "");
           setValue("hireDate", profile.joinAt || "");

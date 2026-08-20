@@ -46,6 +46,7 @@ const HomePage: NextPage = () => {
     const fetchProfile = async () => {
       try {
         const profile = await AuthAPI.getProfile();
+        if (!profile) return;
         setMyId(profile.id);
         setMyBrandId(profile.brandId ?? -1);
         if (role === "GENERAL") {
